@@ -4,6 +4,7 @@ const URL = `https://api.thingspeak.com/channels/${CHANNEL_ID}/feeds.json?api_ke
 
 let grafico;
 
+// Cores do gráfico dependendo do tema
 function getChartColors() {
     const darkMode = document.body.classList.contains("dark");
     return darkMode
@@ -32,36 +33,51 @@ async function carregarDados() {
         const data = await resp.json();
         const feeds = data.feeds;
 
-        const tempo = feeds.map(f => new Date(f.created_at).toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit", second:"2-digit" }));
-        const umidade = feeds.map(f => parseFloat(f.field1));
-        const temperatura = feeds.map(f => parseFloat(f.field2));
+        // Ajuste de valores reais
+        const umidade = feeds.map(f => {
+            let val = parseFloat(f.field1);
+            if (val > 100) val = val / 10; // normaliza se estiver acima de 100%
+            return val;
+        });
+
+        const temperatura = feeds.map(f => {
+            let val = parseFloat(f.field2);
+            if (val > 60) val = val / 10; // normaliza se estiver acima de 60°C
+            return val;
+        });
+
+        const tempo = feeds.map(f => new Date(f.created_at).toLocaleTimeString("pt-BR", {
+            hour:"2-digit", minute:"2-digit", second:"2-digit"
+        }));
 
         const ultimaTemp = temperatura[temperatura.length-1];
-        const penultimaTemp = temperatura[temperatura.length-2];
+        const penultimaTemp = temperatura[temperatura.length-2] ?? ultimaTemp;
         const ultimaUmid = umidade[umidade.length-1];
-        const penultimaUmid = umidade[umidade.length-2];
+        const penultimaUmid = umidade[umidade.length-2] ?? ultimaUmid;
 
         // Atualiza indicadores
-        document.getElementById("tempAtual").innerText = `${ultimaTemp} °C`;
-        document.getElementById("umidAtual").innerText = `${ultimaUmid} %`;
-        document.getElementById("trendTemp").innerText = ultimaTemp >= penultimaTemp ? "🔼" : "🔽";
-        document.getElementById("trendUmid").innerText = ultimaUmid >= penultimaUmid ? "🔼" : "🔽";
+        document.getElementById("tempAtual").innerText = `${ultimaTemp.toFixed(1)} °C`;
+        document.getElementById("umidAtual").innerText = `${ultimaUmid.toFixed(1)} %`;
 
-        // Alertas
+        // Atualiza tendência com setas CSS
+        document.getElementById("trendTemp").className = "trend " + (ultimaTemp >= penultimaTemp ? "up" : "down");
+        document.getElementById("trendUmid").className = "trend " + (ultimaUmid >= penultimaUmid ? "up" : "down");
+
+        // Alertas de cor nos cards
         const cardTemp = document.getElementById("cardTemp");
         const cardUmid = document.getElementById("cardUmid");
         cardTemp.style.background = ultimaTemp > 30 ? "#fca5a5" : "";
         cardUmid.style.background = ultimaUmid < 30 ? "#bae6fd" : "";
 
         // Estatísticas
-        document.getElementById("tempMin").innerText = Math.min(...temperatura);
-        document.getElementById("tempMax").innerText = Math.max(...temperatura);
+        document.getElementById("tempMin").innerText = Math.min(...temperatura).toFixed(1);
+        document.getElementById("tempMax").innerText = Math.max(...temperatura).toFixed(1);
         document.getElementById("tempMed").innerText = (temperatura.reduce((a,b)=>a+b)/temperatura.length).toFixed(1);
-        document.getElementById("umidMin").innerText = Math.min(...umidade);
-        document.getElementById("umidMax").innerText = Math.max(...umidade);
+        document.getElementById("umidMin").innerText = Math.min(...umidade).toFixed(1);
+        document.getElementById("umidMax").innerText = Math.max(...umidade).toFixed(1);
         document.getElementById("umidMed").innerText = (umidade.reduce((a,b)=>a+b)/umidade.length).toFixed(1);
 
-        // Tabela e lista
+        // Tabela e lista mobile
         const tbody = document.getElementById("tabelaDados");
         const lista = document.getElementById("listaDados");
         tbody.innerHTML = "";
@@ -70,14 +86,14 @@ async function carregarDados() {
         for (let i = feeds.length-1; i >= 0; i--) {
             tbody.innerHTML += `<tr>
                 <td>${new Date(feeds[i].created_at).toLocaleString("pt-BR")}</td>
-                <td>${temperatura[i]}</td>
-                <td>${umidade[i]}</td>
+                <td>${temperatura[i].toFixed(1)}</td>
+                <td>${umidade[i].toFixed(1)}</td>
             </tr>`;
 
             lista.innerHTML += `<div class="item">
                 <p><strong>Data/Hora:</strong> ${new Date(feeds[i].created_at).toLocaleString("pt-BR")}</p>
-                <p><strong>Temperatura:</strong> ${temperatura[i]} °C</p>
-                <p><strong>Umidade:</strong> ${umidade[i]} %</p>
+                <p><strong>Temperatura:</strong> ${temperatura[i].toFixed(1)} °C</p>
+                <p><strong>Umidade:</strong> ${umidade[i].toFixed(1)} %</p>
             </div>`;
         }
 

@@ -65,7 +65,7 @@ dashboard-iot/
 
 1. Clone este repositório:
 ```bash
-git clone https://github.com/SEU_USUARIO/dashboard-iot.git
+git clone https://github.com/MorganaSouza/Meu-Dashboard.git
 ````
 
 2. Abra `index.html` no navegador.

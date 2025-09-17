@@ -73,7 +73,11 @@ git clone https://github.com/MorganaSouza/Meu-Dashboard.git
    * O dashboard carregará os **últimos 10 registros** automaticamente.
    * O gráfico e os indicadores se atualizam a cada **15 segundos**.
 
----
+3. CLique no link do site do Dashboard para visualizar:
+```bash
+  https://meu-dashboardiot.netlify.app/
+  ````
+
 
 ## Observações
 

@@ -6,26 +6,16 @@
     font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* Corpo */
+/* Corpo e temas */
 body {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
     transition: background 0.3s, color 0.3s;
 }
-
-/* Temas */
-body.light {
-    background: #f0f4f8;
-    color: #1f2937;
-}
-body.dark {
-    background: #0f172a;
-    color: #f1f5f9;
-}
-body.dark h1, body.dark h2, body.dark p, body.dark td, body.dark th {
-    color: #f9fafb;
-}
+body.light { background: #f0f4f8; color: #1f2937; }
+body.dark { background: #0f172a; color: #f1f5f9; }
+body.dark h1, body.dark h2, body.dark p, body.dark td, body.dark th { color: #f9fafb; }
 
 /* Cabeçalho */
 header {
@@ -52,10 +42,7 @@ header button {
     font-weight: bold;
     transition: 0.3s;
 }
-body.dark header button {
-    background: #1f2937;
-    color: #f9fafb;
-}
+body.dark header button { background: #1f2937; color: #f9fafb; }
 
 /* Cards */
 .cards {
@@ -74,14 +61,38 @@ body.dark header button {
     text-align: center;
     transition: 0.3s;
 }
-body.dark .card {
-    background: #1e293b;
-    color: #f9fafb;
-}
+body.dark .card { background: #1e293b; color: #f9fafb; }
 .card:hover { transform: scale(1.05); }
 .card h2 { font-size: 1.2rem; margin-bottom: 10px; }
 .card p { font-size: 1.5rem; font-weight: bold; }
-.trend { font-size: 1.2rem; }
+
+/* Tendência com setas CSS */
+.trend {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin-top: 5px;
+}
+.trend.up::after {
+    content: "";
+    display: block;
+    margin: auto;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 12px solid green;
+}
+.trend.down::after {
+    content: "";
+    display: block;
+    margin: auto;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-top: 12px solid red;
+}
 
 /* Estatísticas */
 .stats {
@@ -114,11 +125,7 @@ body.dark section { background: #1e293b; color: #f9fafb; }
 section h2 { text-align: center; margin-bottom: 15px; font-size: 1.5rem; }
 
 /* Gráfico */
-.grafico-container {
-    width: 100%;
-    height: 400px;
-    position: relative;
-}
+.grafico-container { width: 100%; height: 400px; position: relative; }
 .loader {
     position: absolute;
     top: 45%;
